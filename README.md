@@ -13,9 +13,12 @@
 	So it's more like a "to do list bot" :|
 
 ### environment setup
-*	Well I prefer opening up three three terminals
+*	Well I prefer opening up three separate terminals
 *	one for ngrok: run `./ngrok http 5000`, modify the token and web URL in server.py and webhook.py
 *	one for server.py: run `export FLASK_APP=server.py` and  `flask run`, the server should
 *	one for webhook.py: this one's a bit trickier, I had to install "pipenv" for running webhook(or else it just can't work), anyways, run `pipenv shell` to create a virtual shell, then run `python3 webhook.py`
 
 *	there you go!!! you're all set to chat with Randy
+
+### state diagram
+![Imgur](https://i.imgur.com/7kGBDnE.png)

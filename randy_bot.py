@@ -1,5 +1,6 @@
 from transitions.extensions import GraphMachine
 from random import randint
+from dbHelper import DBHelper 
 
 listCalm = ["May I help you??", "Umm....Yes??", "???"]
 listAnnoyed = ["You're being annoying right now...", "I'm almost out of patience", "Just what do you want from me??"]
@@ -11,12 +12,44 @@ class randyMachine(GraphMachine):
 	annoyCnt = 0
 	angryCnt = 0
 	from_menu = 0
+	db = DBHelper()
 
 	def __init__(self, **machine_configs):
+		self.db.setup()
 		self.machine = GraphMachine(
 			model=self,
 			**machine_configs
 		)
+
+	# switching back to menu
+	def on_enter_menu(self, update):
+		update.message.reply_text("please select a mode:\n/angry_randy - try to annoy Randy.\n/scheduling - Randy will help you manage your schedule.\n/menu - see what Randy can do.")
+
+	# scheduler mode
+	def menu_to_scheduler(self, update):
+		text = update.message.text
+		return text == '/scheduling'
+	
+	def on_enter_scheduler(self, update):
+		update.message.reply_text("A neat scheduler, huh?\n/start - to start scheduling\n/end - to end scheduling")
+	
+	def scheduler_to_menu(self, update):
+		text = update.message.text
+		return text == '/menu'
+	
+	def start_scheduling(self, update):
+		text = update.message.text
+		return text == '/start'
+	
+	def on_enter_scheduling(self, update):
+		update.message.reply_text("enter your schedules in the format: 'to do'-'time'")
+	
+	def end_scheduling(self, update):
+		text = update.message.text
+		return text == '/end'
+
+
+	# functions for angry_randy mode
 	def menu_to_calm(self, update):
 		text = update.message.text
 		if text == '/angry_randy':
@@ -24,9 +57,6 @@ class randyMachine(GraphMachine):
 			return 1
 		else:
 			return 0
-
-	def on_enter_menu(self, update):
-		update.message.reply_text("please select a mode:\n/angry_randy - try to annoy Randy.\n/scheduling - Randy will help you manage your schedule.\n/menu - see what Randy can do.")
 
 	def on_enter_calm(self, update):
 		if self.from_menu == 1:
@@ -46,8 +76,7 @@ class randyMachine(GraphMachine):
 		if self.calmCnt > 3:
 			return 1
 		else:
-			return 0
-			
+			return 0			
 		
 	def on_enter_annoyed(self, update):
 		print("now annoyed.")
